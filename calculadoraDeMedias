@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Médias</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .tab-button {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .tab-button.active {
+            color: #007bff;
+            border-bottom: 3px solid #007bff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input, button, textarea {
+            padding: 12px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #545b62);
+        }
+        
+        .result {
+            background: #f8f9fa;
+            padding: 25px;
+            margin-top: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #28a745;
+        }
+        
+        .media-display {
+            text-align: center;
+            font-size: 28px;
+            margin: 20px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .calculation-result {
+            font-size: 36px;
+            color: #155724;
+            margin: 15px 0;
+        }
+        
+        .error {
+            background: #f8d7da;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .info-box {
+            background: #d1ecf1;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .values-list {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .calculation-steps {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .weight-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .weight-1 { background: #28a745; }
+        .weight-2 { background: #007bff; }
+        .weight-3 { background: #dc3545; }
+        .weight-4 { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Calculadora de Médias</h1>
+        <div class="subtitle">Calcule Média Aritmética Simples e Média Ponderada</div>
+        
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="openTab('simples')">📈 Média Simples</button>
+            <button class="tab-button" onclick="openTab('ponderada')">⚖️ Média Ponderada</button>
+        </div>
+        
+        <!-- ABA MÉDIA SIMPLES -->
+        <div id="simples" class="tab-content active">
+            <form method="post" action="">
+                <input type="hidden" name="tipo" value="simples">
+                
+                <div class="info-box">
+                    <strong>📚 Média Aritmética Simples:</strong><br>
+                    Soma de todos os valores dividida pela quantidade de valores<br>
+                    <em>Fórmula: M = (x₁ + x₂ + ... + xₙ) ÷ n</em>
+                </div>
+                
+                <div class="form-group">
+                    <label for="valores_simples">🔢 Valores (separados por vírgula):</label>
+                    <textarea id="valores_simples" name="valores" rows="4" 
+                              placeholder="Ex: 7.5, 8.0, 6.5, 9.0, 7.0" required><?php 
+                        echo isset($_POST['tipo']) && $_POST['tipo'] === 'simples' && isset($_POST['valores']) 
+                        ? htmlspecialchars($_POST['valores']) 
+                        : ''; 
+                    ?></textarea>
+                    <small>Separe os valores com vírgula. Exemplo: 7.5, 8.0, 6.5</small>
+                </div>
+                
+                <button type="submit">🧮 Calcular Média Simples</button>
+            </form>
+            
+            <?php
+            if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['tipo']) && $_POST['tipo'] === 'simples') {
+                calcularMediaSimples();
+            }
+            ?>
+        </div>
+        
+        <!-- ABA MÉDIA PONDERADA -->
+        <div id="ponderada" class="tab-content">
+            <form method="post" action="">
+                <input type="hidden" name="tipo" value="ponderada">
+                
+                <div class="info-box">
+                    <strong>⚖️ Média Aritmética Ponderada:</strong><br>
+                    Soma dos valores multiplicados por seus pesos, dividida pela soma dos pesos<br>
+                    <em>Fórmula: M = (x₁·p₁ + x₂·p₂ + ... + xₙ·pₙ) ÷ (p₁ + p₂ + ... + pₙ)</em>
+                </div>
+                
+                <div class="form-group">
+                    <label for="valores_ponderada">🔢 Valores e Pesos (valor:peso):</label>
+                    <textarea id="valores_ponderada" name="valores_ponderada" rows="4" 
+                              placeholder="Ex: 7.5:2, 8.0:3, 6.5:1, 9.0:4" required><?php 
+                        echo isset($_POST['tipo']) && $_POST['tipo'] === 'ponderada' && isset($_POST['valores_ponderada']) 
+                        ? htmlspecialchars($_POST['valores_ponderada']) 
+                        : ''; 
+                    ?></textarea>
+                    <small>Formato: valor:peso separados por vírgula. Exemplo: 7.5:2, 8.0:3</small>
+                </div>
+                
+                <button type="submit">⚖️ Calcular Média Ponderada</button>
+            </form>
+            
+            <?php
+            if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['tipo']) && $_POST['tipo'] === 'ponderada') {
+                calcularMediaPonderada();
+            }
+            ?>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #e9ecef; border-radius: 8px; font-size: 12px; text-align: center;">
+            <strong>💡 Exemplos:</strong><br>
+            • <strong>Simples:</strong> 7, 8, 6, 9 → Média = 7.5<br>
+            • <strong>Ponderada:</strong> 7:2, 8:3, 6:1 → Média = (7×2 + 8×3 + 6×1) ÷ (2+3+1) = 7.33
+        </div>
+    </div>
+
+    <?php
+    // FUNÇÃO PARA CALCULAR MÉDIA SIMPLES
+    function calcularMediaSimples() {
+        if (!isset($_POST['valores']) || empty(trim($_POST['valores']))) {
+            echo "<div class='error'>❌ Por favor, digite alguns valores!</div>";
+            return;
+        }
+        
+        $entrada = trim($_POST['valores']);
+        $valores_array = explode(',', $entrada);
+        $valores_numericos = [];
+        $valores_invalidos = [];
+        
+        // Processa cada valor
+        foreach ($valores_array as $valor) {
+            $valor_limpo = trim($valor);
+            if (is_numeric($valor_limpo)) {
+                $valores_numericos[] = (float)$valor_limpo;
+            } elseif (!empty($valor_limpo)) {
+                $valores_invalidos[] = $valor_limpo;
+            }
+        }
+        
+        // Verifica se há valores válidos
+        if (empty($valores_numericos)) {
+            echo "<div class='error'>❌ Nenhum valor numérico válido encontrado!</div>";
+            return;
+        }
+        
+        // Calcula a média
+        $soma = array_sum($valores_numericos);
+        $quantidade = count($valores_numericos);
+        $media = $soma / $quantidade;
+        
+        // Exibe resultados
+        echo "<div class='result'>";
+        
+        echo "<div class='media-display'>";
+        echo "<div>Média Aritmética Simples:</div>";
+        echo "<div class='calculation-result'>" . number_format($media, 2, ',', '.') . "</div>";
+        echo "</div>";
+        
+        echo "<div class='values-list'>";
+        echo "<strong>📋 Valores processados (" . count($valores_numericos) . " itens):</strong><br>";
+        echo implode(', ', $valores_numericos);
+        echo "</div>";
+        
+        echo "<div class='calculation-steps'>";
+        echo "<strong>🔍 Cálculo passo a passo:</strong><br>";
+        echo "Soma: " . implode(' + ', $valores_numericos) . " = " . $soma . "<br>";
+        echo "Quantidade: " . $quantidade . " valores<br>";
+        echo "Média: " . $soma . " ÷ " . $quantidade . " = " . number_format($media, 2, ',', '.');
+        echo "</div>";
+        
+        if (!empty($valores_invalidos)) {
+            echo "<div class='error' style='margin-top: 15px;'>";
+            echo "⚠️ Valores ignorados (não numéricos): " . implode(', ', $valores_invalidos);
+            echo "</div>";
+        }
+        
+        echo "</div>";
+    }
+    
+    // FUNÇÃO PARA CALCULAR MÉDIA PONDERADA
+    function calcularMediaPonderada() {
+        if (!isset($_POST['valores_ponderada']) || empty(trim($_POST['valores_ponderada']))) {
+            echo "<div class='error'>❌ Por favor, digite valores e pesos!</div>";
+            return;
+        }
+        
+        $entrada = trim($_POST['valores_ponderada']);
+        $pares_array = explode(',', $entrada);
+        $valores_pesos = [];
+        $itens_invalidos = [];
+        
+        // Processa cada par valor:peso
+        foreach ($pares_array as $par) {
+            $par_limpo = trim($par);
+            if (strpos($par_limpo, ':') === false) {
+                $itens_invalidos[] = $par_limpo;
+                continue;
+            }
+            
+            list($valor, $peso) = explode(':', $par_limpo, 2);
+            $valor_limpo = trim($valor);
+            $peso_limpo = trim($peso);
+            
+            if (is_numeric($valor_limpo) && is_numeric($peso_limpo) && $peso_limpo > 0) {
+                $valores_pesos[] = [
+                    'valor' => (float)$valor_limpo,
+                    'peso' => (float)$peso_limpo
+                ];
+            } else {
+                $itens_invalidos[] = $par_limpo;
+            }
+        }
+        
+        // Verifica se há pares válidos
+        if (empty($valores_pesos)) {
+            echo "<div class='error'>❌ Nenhum par valor:peso válido encontrado!</div>";
+            return;
+        }
+        
+        // Calcula a média ponderada
+        $soma_ponderada = 0;
+        $soma_pesos = 0;
+        $passo_calculo = [];
+        
+        foreach ($valores_pesos as $item) {
+            $soma_ponderada += $item['valor'] * $item['peso'];
+            $soma_pesos += $item['peso'];
+            $passo_calculo[] = "({$item['valor']} × {$item['peso']})";
+        }
+        
+        $media_ponderada = $soma_ponderada / $soma_pesos;
+        
+        // Exibe resultados
+        echo "<div class='result'>";
+        
+        echo "<div class='media-display'>";
+        echo "<div>Média Aritmética Ponderada:</div>";
+        echo "<div class='calculation-result'>" . number_format($media_ponderada, 2, ',', '.') . "</div>";
+        echo "</div>";
+        
+        echo "<div class='values-list'>";
+        echo "<strong>📋 Valores e Pesos:</strong><br>";
+        foreach ($valores_pesos as $index => $item) {
+            $cor_class = 'weight-' . (($index % 4) + 1);
+            echo "<span class='weight-indicator $cor_class'></span>";
+            echo "Valor: <strong>{$item['valor']}</strong> | Peso: <strong>{$item['peso']}</strong><br>";
+        }
+        echo "</div>";
+        
+        echo "<div class='calculation-steps'>";
+        echo "<strong>🔍 Cálculo passo a passo:</strong><br>";
+        echo "Soma ponderada: " . implode(' + ', $passo_calculo) . " = " . $soma_ponderada . "<br>";
+        echo "Soma dos pesos: " . $soma_pesos . "<br>";
+        echo "Média: " . $soma_ponderada . " ÷ " . $soma_pesos . " = " . number_format($media_ponderada, 2, ',', '.');
+        echo "</div>";
+        
+        if (!empty($itens_invalidos)) {
+            echo "<div class='error' style='margin-top: 15px;'>";
+            echo "⚠️ Itens ignorados (formato inválido): " . implode(', ', $itens_invalidos);
+            echo "</div>";
+        }
+        
+        echo "</div>";
+    }
+    ?>
+
+    <script>
+        function openTab(tabName) {
+            // Esconde todas as abas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove classe active de todos os botões
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Mostra a aba selecionada
+            document.getElementById(tabName).classList.add('active');
+            
+            // Ativa o botão selecionado
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Foca no textarea quando a aba é aberta
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                setTimeout(() => {
+                    const activeTab = document.querySelector('.tab-content.active');
+                    const textarea = activeTab.querySelector('textarea');
+                    if (textarea) {
+                        textarea.focus();
+                    }
+                }, 100);
+            });
+        });
+        
+        // Foca no primeiro textarea quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.tab-content.active textarea').focus();
+        });
+    </script>
+</body>
+</html>
