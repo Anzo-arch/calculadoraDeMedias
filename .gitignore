@@ -1,0 +1,12 @@
+# Logs e caches
+*.log
+*.cache
+
+# VSCode
+.vscode/
+
+# Composer vendor (se usar no futuro)
+vendor/
+
+# Sistema
+.DS_Store
