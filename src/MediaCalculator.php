@@ -1,44 +1,24 @@
 <?php
 class MediaCalculator {
 
-    // Calcula média simples
-    public static function simples(string $valores): float {
-        $valoresArray = array_map('trim', explode(',', $valores));
-        $numeros = [];
-
-        foreach($valoresArray as $v){
-            if(is_numeric($v)) $numeros[] = (float)$v;
-        }
-
-        if(empty($numeros)){
-            throw new InvalidArgumentException('Nenhum valor numérico válido!');
-        }
-
-        return array_sum($numeros) / count($numeros);
+    public static function mediaSimples(array $valores): ?float {
+        $num_validos = array_filter($valores, 'is_numeric');
+        if (empty($num_validos)) return null;
+        return array_sum($num_validos) / count($num_validos);
     }
 
-    // Calcula média ponderada
-    public static function ponderada(string $pares): float {
-        $paresArray = array_map('trim', explode(',', $pares));
-        $totalValor = 0;
-        $totalPeso = 0;
+    public static function mediaPonderada(array $pares): ?float {
+        $total_valor = 0;
+        $total_peso = 0;
 
-        foreach($paresArray as $par){
-            if(strpos($par, ':') !== false){
-                list($v, $p) = explode(':', $par);
-                $v = trim($v);
-                $p = trim($p);
-                if(is_numeric($v) && is_numeric($p) && $p > 0){
-                    $totalValor += $v * $p;
-                    $totalPeso += $p;
-                }
+        foreach ($pares as [$valor, $peso]) {
+            if (is_numeric($valor) && is_numeric($peso) && $peso > 0) {
+                $total_valor += $valor * $peso;
+                $total_peso += $peso;
             }
         }
 
-        if($totalPeso === 0){
-            throw new InvalidArgumentException('Nenhum par válido encontrado!');
-        }
-
-        return $totalValor / $totalPeso;
+        if ($total_peso === 0) return null;
+        return $total_valor / $total_peso;
     }
 }

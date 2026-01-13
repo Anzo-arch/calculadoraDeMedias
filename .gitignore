@@ -1,12 +1,4 @@
-# Logs e caches
-*.log
-*.cache
-
-# VSCode
-.vscode/
-
-# Composer vendor (se usar no futuro)
-vendor/
-
-# Sistema
+/vendor/
 .DS_Store
+.env
+node_modules/

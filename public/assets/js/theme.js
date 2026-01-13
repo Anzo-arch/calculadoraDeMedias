@@ -1,13 +1,29 @@
-const toggleButton = document.getElementById('theme-toggle');
+const btn = document.getElementById('theme-toggle');
+const icon = document.getElementById('theme-icon');
 
-// Carrega tema salvo
-if(localStorage.getItem('theme')){
-    document.body.setAttribute('data-theme', localStorage.getItem('theme'));
+function setTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+    icon.textContent = '🌞'; // clique para clarear
+  } else {
+    document.documentElement.classList.remove('dark');
+    icon.textContent = '🌙'; // clique para escurecer
+  }
+  localStorage.setItem('theme', theme);
 }
 
-toggleButton.addEventListener('click', () => {
-    const current = document.body.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    document.body.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
+// Alternar tema ao clicar no botão
+btn.addEventListener('click', () => {
+  const isDark = document.documentElement.classList.contains('dark');
+  setTheme(isDark ? 'light' : 'dark');
+});
+
+// Aplicar tema salvo ao carregar a página
+window.addEventListener('load', () => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else {
+    setTheme('light'); // padrão
+  }
 });
